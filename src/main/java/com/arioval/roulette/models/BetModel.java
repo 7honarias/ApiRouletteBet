@@ -7,6 +7,7 @@ public class BetModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String 	id;
 	private String 	rouletteId;
+	private String  userId;
 	private int 	betNum;
 	private String 	betColor;
 	private Double 	betAmount;
@@ -25,6 +26,12 @@ public class BetModel implements Serializable{
 	}
 	public void setRouletteId(String rouletteId) {
 		this.rouletteId = rouletteId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public int getBetNum() {
 		return betNum;

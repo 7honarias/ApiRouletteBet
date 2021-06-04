@@ -19,7 +19,7 @@ public class RouletteServiceImp implements RouletteService{
 
 	@Autowired
 	private RedisTemplate<String, RouletteModel> rouletteRedisTemplate;
-	private static final String KEY_ROULETTE = "Ruleta";
+	private static final String KEY_ROULETTE = "Roulette";
 	private HashOperations<String, String, RouletteModel> operations;
 	
 	public RouletteServiceImp() {
@@ -88,7 +88,8 @@ public class RouletteServiceImp implements RouletteService{
 			return "Ruleta no existe";
 		}
 		
-		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.CREATE)){
+		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.CREATE)) {
+			
 			roulette.setStatus(StatusRoulette.OPEN);
 			this.updateRoulette(roulette, id);
 			
@@ -96,7 +97,7 @@ public class RouletteServiceImp implements RouletteService{
 		}
 		else {
 			
-			return "Apertura denegada";
+			return "Esta ruleta ya cerro";
 		}
 	}
 	

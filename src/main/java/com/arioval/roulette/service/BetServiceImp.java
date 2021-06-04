@@ -18,12 +18,12 @@ import com.arioval.roulette.models.*;
 public class BetServiceImp implements BetService{
 
 	@Autowired
-	private RedisTemplate<String, BetModel> apuestaRedisTemplate;
+	private RedisTemplate<String, BetModel> betRedisTemplate;
 	
 	@Autowired
 	private RouletteServiceImp rouletteService;
 
-	private static final String KEY_APUESTA = "Apuesta";
+	private static final String KEY_BET= "Bet";
 	private RouletteModel roulette = null;
 	private HashOperations<String, String, BetModel> operations;
 
@@ -32,34 +32,34 @@ public class BetServiceImp implements BetService{
 
 	@PostConstruct
 	private void ini() {
-		operations = apuestaRedisTemplate.opsForHash();
+		operations = betRedisTemplate.opsForHash();
 	}
 
 	@Override
 	public Map<String, BetModel> getBets() {
-		return getOperations().entries(KEY_APUESTA);
+		return getOperations().entries(KEY_BET);
 	}
 
 	@Override
 	public BetModel getBetById(String id) {
-		return (BetModel) getOperations().get(KEY_APUESTA, id);
+		return (BetModel) getOperations().get(KEY_BET, id);
 	}
 
 	@Override
 	public String createBet(BetModel bet) {
 		bet.setId( UUID.randomUUID().toString());
-		getOperations().put(KEY_APUESTA, bet.getId(), bet);
+		getOperations().put(KEY_BET, bet.getId(), bet);
 		return bet.getId();
 	}
 
 	@Override
 	public void deleteBet(String id) {
-		getOperations().delete(KEY_APUESTA, id);
+		getOperations().delete(KEY_BET, id);
 	}
 
 	@Override
 	public void updateBet(BetModel bet, String id) {
-		operations.put(KEY_APUESTA, bet.getId(), bet);
+		operations.put(KEY_BET, bet.getId(), bet);
 	}
 	
 	@Override
@@ -93,8 +93,9 @@ public class BetServiceImp implements BetService{
 
 		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.OPEN)){
 			
-			if(bet.getBetNum() < 0 || bet.getBetNum() > 36)
+			if(bet.getBetNum() < 0 || bet.getBetNum() > 36) {
 				return "Número de apuesta no valido";
+			}
 			
 			if(bet.getBetAmount() < 0 || bet.getBetAmount() > 10000.0)
 				return "Valor de apuesta no permitido";

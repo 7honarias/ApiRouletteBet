@@ -33,13 +33,13 @@ public class RouletteController {
 	}
 	
 	@PutMapping("/roulette/open/{id}")
-	public ResponseEntity<String> abrirRuleta(@PathVariable String id) {
+	public ResponseEntity<String> openRoulette(@PathVariable String id) {
 		statusOfOperation = rouletteService.openRoulette(id);
     	return new ResponseEntity<>(statusOfOperation,HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/roulette/status")
-	public Map<String, String> obtenerRuletasConEstado() {
+	public Map<String, String> getRouletteWithStatus() {
 		Map<String, String> rouletteStatus= rouletteService.getRoulettesWithStatus();
 		return rouletteStatus;
 	}
