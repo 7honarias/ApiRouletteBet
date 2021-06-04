@@ -5,7 +5,6 @@ import java.util.List;
 import java.lang.Math; 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +55,7 @@ public class BetController {
     			listWinner.add(winner);
     		}
     	}
-    	winner = "Numero ganador " + numberWinner + colorWinner;
+    	winner = "Numero ganador " + numberWinner + " " + colorWinner;
     	listWinner.add(winner);
     	if (listWinner.size() > 0) {
     		return ResponseEntity.ok(listWinner);
@@ -64,9 +63,6 @@ public class BetController {
     	else {
     		return ResponseEntity.noContent().build();
     	}
-    	/*if(listBet != null){
-    		return ResponseEntity.ok(listBet);
-    	}*/
 	}
 	
     @PostMapping(value = "/bet", consumes = "application/json", produces = "application/json")
