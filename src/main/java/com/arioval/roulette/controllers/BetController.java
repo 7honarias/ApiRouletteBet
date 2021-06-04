@@ -22,47 +22,46 @@ public class BetController {
 
 	@Autowired
 	private BetServiceImp betService;
-		
+	
     @PutMapping("/bet/close/{RouletteId}")
-	public ResponseEntity<List<String>> closeRoulette(@PathVariable String RouletteId) {
+	public ResponseEntity<List<WinnerModel>> closeRoulette(@PathVariable String RouletteId) {
+    	WinnerModel winner = new WinnerModel();
+    	String colorWinner = null;
     	int MAX = 36;
     	int MIN = 0;
     	int numberWinner = (int)(Math.random() * (MAX - MIN + 1)+ MIN);
-    	String colorWinner = null;
-    	String winner;
     	
     	if(numberWinner % 2 == 0) {
     		colorWinner = "rojo";
     	} else {
-    		colorWinner = "Negro";
+    		colorWinner = "negro";
     	}
+    	System.out.println("Ganador " + colorWinner + " " + numberWinner);
     	
     	List<BetModel> listBet = betService.closeBet(RouletteId);
-    	List<String> listWinner = new ArrayList<>(); 
+    	List<WinnerModel> listWinner = new ArrayList<>();
+    	
+    	if(listBet == null) {
+    		return ResponseEntity.ok(listWinner);
+    	}
     	
     	for(BetModel bet : listBet) {
     		String colorBet = bet.getBetColor();
     		int numBet = bet.getBetNum();
     		Double AmountWin = 0.0;
-    		if (colorWinner == colorBet) {
+    		if (colorWinner.equalsIgnoreCase(colorBet)) {
     			AmountWin += bet.getBetAmount() * 1.8;
-    		}
-    		if (numberWinner == numBet) {
+    		} else if (numberWinner == numBet && colorBet == null) {
     			AmountWin += bet.getBetAmount() * 5;
     		}
     		if (AmountWin != 0.0) {
-    			winner = "Ganador " + bet.getUserId() + AmountWin;
+    			winner.setWinAmount(AmountWin);
+    			winner.setUserId(bet.getUserId());
+    			winner.setRouletteId(bet.getRouletId());
     			listWinner.add(winner);
     		}
     	}
-    	winner = "Numero ganador " + numberWinner + " " + colorWinner;
-    	listWinner.add(winner);
-    	if (listWinner.size() > 0) {
-    		return ResponseEntity.ok(listWinner);
-    	}
-    	else {
-    		return ResponseEntity.noContent().build();
-    	}
+    	return ResponseEntity.ok(listWinner);
 	}
 	
     @PostMapping(value = "/bet", consumes = "application/json", produces = "application/json")
