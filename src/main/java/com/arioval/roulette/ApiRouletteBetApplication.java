@@ -10,5 +10,4 @@ public class ApiRouletteBetApplication {
 		SpringApplication.run(ApiRouletteBetApplication.class, args);
 		
 	}
-
 }

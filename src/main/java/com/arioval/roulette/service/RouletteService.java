@@ -8,7 +8,7 @@ import com.arioval.roulette.models.RouletteModel;
 
 public interface RouletteService {
 	
-    Map<String, RouletteModel> getRoulette();
+    Map<String, RouletteModel> getRoulettes();
     RouletteModel getRouletteById(String id);
     String createRoulette(RouletteModel roulette);
     void deleteRoulette(String id);

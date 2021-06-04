@@ -24,9 +24,7 @@ public class BetServiceImp implements BetService{
 	private RouletteServiceImp rouletteService;
 
 	private static final String KEY_APUESTA = "Apuesta";
-	
 	private RouletteModel roulette = null;
-
 	private HashOperations<String, String, BetModel> operations;
 
 	public BetServiceImp() {
@@ -37,19 +35,16 @@ public class BetServiceImp implements BetService{
 		operations = apuestaRedisTemplate.opsForHash();
 	}
 
-
 	@Override
 	public Map<String, BetModel> getBets() {
 		return getOperations().entries(KEY_APUESTA);
 	}
 
-	
 	@Override
 	public BetModel getBetById(String id) {
 		return (BetModel) getOperations().get(KEY_APUESTA, id);
 	}
 
-	
 	@Override
 	public String createBet(BetModel bet) {
 		bet.setId( UUID.randomUUID().toString());
@@ -57,31 +52,30 @@ public class BetServiceImp implements BetService{
 		return bet.getId();
 	}
 
-	
 	@Override
 	public void deleteBet(String id) {
 		getOperations().delete(KEY_APUESTA, id);
 	}
 
-	
 	@Override
 	public void updateBet(BetModel bet, String id) {
 		operations.put(KEY_APUESTA, bet.getId(), bet);
 	}
-	
 	
 	@Override
 	public List<BetModel> closeBet(String rouletteId) {
 		
 		roulette = rouletteService.getRouletteById(rouletteId);
 		
-		if(roulette == null)
+		if(roulette == null) {
 			return null;
+		}
 		
 		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.OPEN)){
 			
 			roulette.setStatus(StatusRoulette.CLOSE);
 	    	rouletteService.updateRoulette(roulette, rouletteId);
+	    	
 			return roulette.getBets();
 		}
 		else {
@@ -89,7 +83,6 @@ public class BetServiceImp implements BetService{
 		}
 	}
 	
-
 	@Override
 	public String makeBet(BetModel bet) {
 		
@@ -117,9 +110,7 @@ public class BetServiceImp implements BetService{
 		}
 	}
 
-
 	public HashOperations<String, String, BetModel> getOperations() {
 		return operations;
 	}
-	
 }
