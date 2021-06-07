@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.arioval.roulette.common.Common;
 import com.arioval.roulette.models.*;
 
 
@@ -23,7 +24,7 @@ public class BetServiceImp implements BetService{
 	@Autowired
 	private RouletteServiceImp rouletteService;
 
-	private static final String KEY_BET= "Bet";
+	
 	private RouletteModel roulette = null;
 	private HashOperations<String, String, BetModel> operations;
 
@@ -37,29 +38,29 @@ public class BetServiceImp implements BetService{
 
 	@Override
 	public Map<String, BetModel> getBets() {
-		return getOperations().entries(KEY_BET);
+		return getOperations().entries(Common.KEY_BET);
 	}
 
 	@Override
 	public BetModel getBetById(String id) {
-		return (BetModel) getOperations().get(KEY_BET, id);
+		return (BetModel) getOperations().get(Common.KEY_BET, id);
 	}
 
 	@Override
 	public String createBet(BetModel bet) {
 		bet.setId( UUID.randomUUID().toString());
-		getOperations().put(KEY_BET, bet.getId(), bet);
+		getOperations().put(Common.KEY_BET, bet.getId(), bet);
 		return bet.getId();
 	}
 
 	@Override
 	public void deleteBet(String id) {
-		getOperations().delete(KEY_BET, id);
+		getOperations().delete(Common.KEY_BET, id);
 	}
 
 	@Override
 	public void updateBet(BetModel bet, String id) {
-		operations.put(KEY_BET, bet.getId(), bet);
+		operations.put(Common.KEY_BET, bet.getId(), bet);
 	}
 	
 	@Override
@@ -69,8 +70,7 @@ public class BetServiceImp implements BetService{
 		
 		if(roulette == null) {
 			return null;
-		}
-		
+		}		
 		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.OPEN)){
 			
 			roulette.setStatus(StatusRoulette.CLOSE);
@@ -91,12 +91,10 @@ public class BetServiceImp implements BetService{
 		if(roulette == null)
 			return "No existe la ruleta con id: "+bet.getRouletId();
 
-		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.OPEN)){
-			
+		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.OPEN)){		
 			if(bet.getBetNum() < 0 || bet.getBetNum() > 36) {
 				return "Número de apuesta no valido";
 			}
-			
 			if(bet.getBetAmount() < 0 || bet.getBetAmount() > 10000.0)
 				return "Valor de apuesta no permitido";
 			

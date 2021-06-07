@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.arioval.roulette.common.Common;
 import com.arioval.roulette.models.*;
 
 
@@ -19,7 +20,6 @@ public class RouletteServiceImp implements RouletteService{
 
 	@Autowired
 	private RedisTemplate<String, RouletteModel> rouletteRedisTemplate;
-	private static final String KEY_ROULETTE = "Roulette";
 	private HashOperations<String, String, RouletteModel> operations;
 	
 	public RouletteServiceImp() {
@@ -32,33 +32,31 @@ public class RouletteServiceImp implements RouletteService{
 	
 	@Override
 	public Map<String, RouletteModel> getRoulettes() {
-		
-		return getOperations().entries(KEY_ROULETTE);
+		return getOperations().entries(Common.KEY_ROULETTE);
 	}
 	
 	@Override
 	public RouletteModel getRouletteById(String id) {
-		
-		return (RouletteModel) getOperations().get(KEY_ROULETTE, id);
+		return (RouletteModel) getOperations().get(Common.KEY_ROULETTE, id);
 	}
 	
 	@Override
 	public String createRoulette(RouletteModel roulette) {
 		roulette.setId( UUID.randomUUID().toString());
 		roulette.setStatus(StatusRoulette.CREATE);
-		getOperations().put(KEY_ROULETTE, roulette.getId(), roulette);
+		getOperations().put(Common.KEY_ROULETTE, roulette.getId(), roulette);
 		
 		return roulette.getId();
 	}
 	
 	@Override
 	public void deleteRoulette(String id) {
-		getOperations().delete(KEY_ROULETTE, id);
+		getOperations().delete(Common.KEY_ROULETTE, id);
 	}
 	
 	@Override
 	public void updateRoulette(RouletteModel roulette, String id) {
-		operations.put(KEY_ROULETTE, roulette.getId(), roulette);
+		operations.put(Common.KEY_ROULETTE, roulette.getId(), roulette);
 	}
 	
 	@Override
@@ -68,41 +66,34 @@ public class RouletteServiceImp implements RouletteService{
 	
 	@Override
 	public Map<String, String> getRoulettesWithStatus() {
-		
 		Map<String, String> rouletteWithStatus = new HashMap<>();
 		Map<String, RouletteModel> roulettes = this.getRoulettes();
 		
 		for (RouletteModel roulette : roulettes.values()) { 
 			rouletteWithStatus.put(roulette.getId(), roulette.getStatus());
 		}
-
 		return rouletteWithStatus;
 	}
 	
 	@Override
-	public String openRoulette(String id) {
-		
+	public String openRoulette(String id) {	
 		RouletteModel roulette = this.getRouletteById(id);
 		
 		if(roulette == null) {
 			return "Ruleta no existe";
 		}
-		
 		if(roulette.getStatus().equalsIgnoreCase(StatusRoulette.CREATE)) {
-			
 			roulette.setStatus(StatusRoulette.OPEN);
 			this.updateRoulette(roulette, id);
 			
 			return "Abierta exitosamente";
 		}
 		else {
-			
 			return "Esta ruleta ya cerro";
 		}
 	}
 	
 	public HashOperations<String, String, RouletteModel> getOperations() {
-		
 		return operations;
 	}
 	
